@@ -2,9 +2,9 @@ import express, { Express } from "express";
 import submitRouter from "./routes/submit";
 import { connectDB } from "./utils/connectDB";
 import requestsRouter from "./routes/requests";
-import { monitorMiddleware } from "./middleware/alertMiddleware";
 import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
+import { kafkaConsumer } from "./utils/kafkaConsumer";
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -15,10 +15,14 @@ const limiter = rateLimit({
   message: "Too many requests from this IP, please try again after 15 minutes.",
 });
 
+// Create Express app
 export const app: Express = express();
 
 // Connect to MongoDB
 connectDB();
+
+// Start Kafka consumer
+kafkaConsumer.client.connect();
 
 // Middlewares
 app.use(express.json());
