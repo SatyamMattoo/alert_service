@@ -3,8 +3,7 @@ import { handleFailedRequest } from "../utils/alert";
 
 /**
  * Express middleware to check if the request has a valid authorization
- * token. If invalid, sends a 401 Unauthorized response and logs the
- * request as a failed attempt.
+ * token. If invalid, sends a 401 Unauthorized response and calls the alert function.
  *
  * @function
  * @param {Request} req - Express request

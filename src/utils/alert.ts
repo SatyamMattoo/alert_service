@@ -6,6 +6,19 @@ const TIME_WINDOW = 10 * 60 * 1000; // 10 minutes in milliseconds
 const THRESHOLD = 5;
 const MAX_REASONS = 100; // Maximum number of reasons to store
 
+/**
+ * Processes a failed request by updating the corresponding database record.
+ * If the request's timestamp is within the time window, increments the count.
+ * If the time window has passed, resets the count.
+ * Appends the new reason and timestamp to the record.
+ * Ensures only the last 100 reasons are kept.
+ * Checks if the threshold is reached and sends an alert email if so.
+ * Saves or updates the record.
+ * @param {Object} data - An object with the following properties:
+ *   - {string} ip - The IP address of the user making the request.
+ *   - {string} reason - The reason for the failed request.
+ *   - {Date} timestamp - The timestamp of the failed request.
+ */
 export async function processFailedRequest(data: {
   ip: string;
   reason: string;
@@ -48,7 +61,7 @@ export async function processFailedRequest(data: {
       // Check if threshold is reached
       if (existingRecord.count > THRESHOLD) {
         await sendAlertEmail(ip, existingRecord.count);
-        existingRecord.count = 1; // Reset count after sending alert
+        existingRecord.count = 1;
       }
     }
 
@@ -56,7 +69,9 @@ export async function processFailedRequest(data: {
     await existingRecord.save();
 
     console.log(
-      `Processed failed request: IP=${ip}, Reason=${reason}, Timestamp=${timestamp.toISOString()}. Count=${
+      `Processed failed request: IP=${ip}, Reason=${reason}, Timestamp=${
+        timestamp.toISOString().split("T")[0]
+      } ${timestamp.toISOString().split("T")[1].split(".")[0]}. Failed attempts in the time window=${
         existingRecord.count
       }`
     );
@@ -65,6 +80,12 @@ export async function processFailedRequest(data: {
   }
 }
 
+/**
+ * Handles a failed request by sending a message to the Kafka topic "failed-requests"
+ * with the IP address, reason, and current timestamp.
+ * @param {string} ip - The IP address of the user making the request.
+ * @param {string} reason - The reason for the failed request.
+ */
 export async function handleFailedRequest(ip: string, reason: string) {
   try {
     const currentTime = new Date();

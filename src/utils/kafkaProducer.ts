@@ -1,6 +1,6 @@
 // kafkaProducer.ts
 import { KafkaClient, Producer } from "kafka-node";
-import { sslOptions } from "./sslOptions";
+import { sslOptions } from "../config/sslOptions";
 import envs from "../config/envconfig";
 
 const client = new KafkaClient({

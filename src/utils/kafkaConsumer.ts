@@ -1,9 +1,23 @@
 // kafkaConsumer.ts
 import { Consumer, KafkaClient, ConsumerOptions } from "kafka-node";
 import { processFailedRequest } from "./alert";
-import { sslOptions } from "./sslOptions";
+import { sslOptions } from "../config/sslOptions";
 import envs from "../config/envconfig";
 
+/**
+ * Creates a Kafka consumer instance with the specified configuration.
+ *
+ * @returns {Consumer} - An instance of the Kafka consumer
+ *
+ * @remarks
+ * - Connects to the specified Kafka host using SSL encryption
+ * - Configures consumer options for auto-commits and group ID
+ * - Subscribes to the "failed-requests" topic with partition 0
+ * - Processes incoming messages with the `processFailedRequest` function
+ * - Handles consumer errors and offset out-of-range events
+ * - Logs consumer status and errors
+ * - Returns the created consumer instance
+ */
 const createKafkaConsumer = () => {
   const client = new KafkaClient({
     kafkaHost: envs.KAFKA_HOST,
