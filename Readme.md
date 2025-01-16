@@ -1,6 +1,6 @@
-# FlexyPe Backend Assignment 🚀
+# Alerting system for failed backend requests 🚀
 
-This repository contains the implementation of the backend architecture for the **FlexyPe Assignment**. The project demonstrates the use of **Kafka** for handling failed requests and processing them efficiently.
+This repository contains the implementation of the backend architecture for the altering system for failed post requests to the server. The project demonstrates the use of **Kafka** for handling failed requests and processing them efficiently.
 
 ---
 
